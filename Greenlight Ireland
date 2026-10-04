@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>[Product] · Earn it. Save it. Own it.</title>
+<meta name="description" content="A kids' card and money app where allowance is linked to chores, savings goals fill up as they save, and you stay in control.">
+<meta property="og:title" content="Earn it. Save it. Own it.">
+<meta property="og:description" content="A kids' card and money app where allowance is linked to chores, savings goals fill up as they save, and you stay in control.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://your-username.github.io/your-page/"> <!-- Replace with your real URL -->
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Earn it. Save it. Own it.">
+<meta name="twitter:description" content="A kids' card and money app where allowance is linked to chores, savings goals fill up as they save, and you stay in control.">
+<!-- Add og:image later: 1200x630 PNG matching dark theme -->
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E🪙%3C/text%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<script>
+  /* Apply saved theme BEFORE first paint (no flash) */
+  try { if (localStorage.getItem('theme') === 'light') document.documentElement.classList.add('light'); } catch (e) {}
+</script>
+<style>
+  :root {
+    --bg: #020a18;
+    --bg-grad: linear-gradient(170deg, #020a18 0%, #041028 40%, #06142e 70%, #020a18 100%);
+    --surface: rgba(8,24,56,0.85);
+    --surface-2: rgba(12,34,76,0.7);
+    --border: rgba(0,170,255,0.12);
+    --border-glow: rgba(0,170,255,0.3);
+    --text: #d0e0f0;
+    --text-bright: #e8f0ff;
+    --text-dim: #6888aa;
+    --neon: #00aaff;
+    --cyan: #00e5ff;
+    --green: #00ff88;
+    --amber: #ffaa00;
+    --red: #ff4466;
+    --purple: #aa66ff;
+    --on-accent: #02101f;
+    --header-bg: rgba(2,10,24,0.6);
+    --grid-opacity: 0.03;
+    --orb-opacity: 0.08;
+    --shadow: 0 10px 40px rgba(0,0,0,0.35);
+  }
+  html.light {
+    --bg: #f3f7fc;
+    --bg-grad: linear-gradient(170deg, #f8fbff 0%, #eaf2fc 45%, #f2f7fd 75%, #f8fbff 100%);
+    --surface: rgba(255,255,255,0.92);
+    --surface-2: rgba(232,242,252,0.85);
+    --border: rgba(0,90,170,0.16);
+    --border-glow: rgba(0,110,200,0.38);
+    --text: #1d2f45;
+    --text-bright: #0a1a30;
+    --text-dim: #55708f;
+    --neon: #0069bd;
+    --cyan: #007c99;
+    --green: #00814a;
+    --amber: #a86400;
+    --red: #c8203f;
+    --purple: #6f3bd0;
+    --on-accent: #ffffff;
+    --header-bg: rgba(248,251,255,0.72);
+    --grid-opacity: 0.06;
+    --orb-opacity: 0.14;
+    --shadow: 0 10px 30px rgba(20,60,110,0.12);
+  }
+
+  * { box-sizing: border-box; }
+  [hidden] { display: none !important; }
+  html { scroll-behavior: smooth; }
+  body {
+    margin: 0; background: var(--bg); color: var(--text);
+    font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif;
+    font-size: 16px; line-height: 1.65; -webkit-font-smoothing: antialiased;
+    transition: background 0.3s, color 0.3s;
+  }
+  a { color: var(--neon); text-decoration: none; transition: color 0.2s, text-shadow 0.2s; }
+  a:hover { color: var(--cyan); text-shadow: 0 0 12px var(--cyan); }
+  :focus-visible { outline: 2px solid var(--cyan); outline-offset: 3px; border-radius: 6px; }
+
+  /* ---------- Background depth ---------- */
+  .bg { position: fixed; inset: 0; background: var(--bg-grad); z-index: -3; }
+  .grid {
+    position: fixed; inset: 0; z-index: -2; pointer-events: none; opacity: var(--grid-opacity);
+    background-image: linear-gradient(var(--neon) 1px, transparent 1px), linear-gradient(90deg, var(--neon) 1px, transparent 1px);
+    background-size: 60px 60px;
+  }
+  .orb { position: fixed; z-index: -1; pointer-events: none; border-radius: 50%; filter: blur(100px); opacity: var(--orb-opacity); }
+  .o1 { width: 520px; height: 520px; background: var(--neon); left: calc(50% - 440px - 460px); top: 6%; animation: d1 28s ease-in-out infinite; }
+  .o2 { width: 460px; height: 460px; background: var(--purple); left: calc(50% + 440px - 60px); top: 40%; animation: d2 34s ease-in-out infinite; }
+  .o3 { width: 400px; height: 400px; background: var(--cyan); left: calc(50% - 440px - 480px); top: 70%; animation: d3 40s ease-in-out infinite; }
+  @keyframes d1 { 0%,100% { transform: translate(0,0); } 50% { transform: translate(60px,90px); } }
+  @keyframes d2 { 0%,100% { transform: translate(0,0); } 50% { transform: translate(-70px,-80px); } }
+  @keyframes d3 { 0%,100% { transform: translate(0,0); } 50% { transform: translate(80px,-60px); } }
+  @media (max-width: 1100px) { .orb { opacity: calc(var(--orb-opacity) / 2); } }
+
+  /* ---------- Header ---------- */
+  header.top {
+    position: sticky; top: 0; z-index: 100; background: var(--header-bg);
+    -webkit-backdrop-filter: blur(20px); backdrop-filter: blur(20px); border-bottom: 1px solid var(--border);
+  }
+  .bar { max-width: 880px; margin: 0 auto; padding: 12px 20px; display: flex; align-items: center; justify-content: space-between; }
+  .brand { font-weight: 700; color: var(--text-bright); }
+  .iconbtn {
+    width: 38px; height: 38px; display: grid; place-items: center; cursor: pointer;
+    background: var(--surface); color: var(--text-bright); border: 1px solid var(--border); border-radius: 10px;
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+  .iconbtn:hover { border-color: var(--border-glow); box-shadow: 0 0 14px var(--border); }
+  .iconbtn svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+  .i-sun { display: none; }
+  html.light .i-sun { display: block; }
+  html.light .i-moon { display: none; }
+
+  /* ---------- Layout ---------- */
+  .wrap { position: relative; z-index: 1; max-width: 880px; margin: 0 auto; padding: 0 20px; }
+  section { padding: 56px 0 8px; scroll-margin-top: 70px; }
+  h2 { margin: 0 0 8px; font-size: clamp(1.5rem, 4vw, 2rem); font-weight: 800; letter-spacing: -0.02em; color: var(--text-bright); line-height: 1.2; }
+  .lede { margin: 0 0 24px; color: var(--text-dim); }
+  .card { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 20px; box-shadow: var(--shadow); }
+
+  .btn {
+    display: inline-block; padding: 14px 26px; border-radius: 999px; border: 0; cursor: pointer;
+    background: var(--neon); color: var(--on-accent); font: inherit; font-weight: 700;
+    box-shadow: 0 0 24px var(--border-glow); transition: transform 0.2s, background 0.2s, box-shadow 0.2s;
+  }
+  a.btn, a.btn:hover { color: var(--on-accent); text-shadow: none; }
+  .btn:hover { background: var(--cyan); transform: translateY(-2px); }
+  .btn.ghost { background: transparent; color: var(--text-bright); border: 1px solid var(--border-glow); box-shadow: none; }
+  .btn.ghost:hover { background: var(--surface-2); }
+  .link { background: none; border: 0; padding: 0; color: var(--neon); font: inherit; cursor: pointer; text-decoration: underline; text-underline-offset: 3px; }
+  .link:hover { color: var(--cyan); }
+
+  /* ---------- Hero ---------- */
+  .hero { padding: 84px 0 24px; }
+  .hero h1 { margin: 0; font-size: clamp(2.6rem, 9vw, 4.4rem); line-height: 1.05; font-weight: 800; letter-spacing: -0.03em; color: var(--text-bright); }
+  .hero h1 span { display: inline-block; }
+  .e { color: var(--amber); } .s { color: var(--green); } .o { color: var(--cyan); }
+  .sub { margin: 24px 0 32px; max-width: 640px; font-size: clamp(1.1rem, 2.6vw, 1.3rem); color: var(--text-bright); line-height: 1.45; }
+
+  /* ---------- Reasons ---------- */
+  .cards { display: grid; gap: 14px; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); }
+  .tag { font-size: 0.78rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 6px; }
+  .cards .card h3 { margin: 0 0 6px; font-size: 1.1rem; color: var(--text-bright); }
+  .cards .card p { margin: 0; font-size: 0.97rem; }
+
+  /* ---------- Sample experience ---------- */
+  .sample { display: grid; grid-template-columns: 190px 1fr; gap: 28px; align-items: center; }
+  .jarcol { text-align: center; }
+  .jarwrap { position: relative; width: 140px; margin: 0 auto 14px; }
+  .jar { display: block; width: 100%; height: auto; }
+  .jbg { fill: var(--surface-2); }
+  .jline { fill: none; stroke: var(--neon); stroke-width: 3; }
+  .jlid { fill: var(--neon); opacity: 0.8; }
+  .jfill { fill: var(--green); opacity: 0.85; transform-box: fill-box; transform-origin: 50% 100%; transform: scaleY(var(--lvl, 0)); transition: transform 0.7s ease; }
+  .coin {
+    position: absolute; left: 50%; top: 0; width: 22px; height: 22px; border-radius: 50%;
+    background: var(--amber); border: 2px solid rgba(255,255,255,0.45); box-shadow: 0 0 12px var(--amber);
+    animation: drop 0.9s ease-in forwards; pointer-events: none;
+  }
+  @keyframes drop { from { transform: translate(-50%, -26px); opacity: 1; } to { transform: translate(-50%, 90px); opacity: 0; } }
+  .steps { list-style: none; margin: 0; padding: 0; counter-reset: st; }
+  .steps li { position: relative; padding: 8px 0 8px 44px; counter-increment: st; color: var(--text-dim); transition: color 0.3s; }
+  .steps li::before {
+    content: counter(st); position: absolute; left: 0; top: 8px; width: 30px; height: 30px; display: grid; place-items: center;
+    border: 2px solid var(--border-glow); border-radius: 50%; font-size: 0.85rem; font-weight: 700; transition: all 0.3s;
+  }
+  .steps li.on { color: var(--text-bright); }
+  .steps li.on::before { border-color: var(--amber); color: var(--amber); }
+  .caption { margin: 16px 0 0; font-size: 0.85rem; color: var(--text-dim); }
+  .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+  /* ---------- Social proof ---------- */
+  .stats { display: grid; gap: 14px; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); margin-bottom: 28px; }
+  .stat .n { font-size: 2.4rem; font-weight: 800; letter-spacing: -0.02em; line-height: 1.1; }
+  .stat p { margin: 6px 0 0; font-size: 0.92rem; color: var(--text); }
+  h3.sub2 { margin: 0 0 14px; font-size: 1.1rem; color: var(--text-bright); }
+  figure.quote { margin: 0; }
+  figure.quote blockquote { margin: 0 0 10px; font-size: 1.05rem; font-weight: 500; color: var(--text-bright); line-height: 1.45; }
+  figure.quote figcaption { font-size: 0.85rem; color: var(--text-dim); }
+
+  /* ---------- Accordion (FAQ + compare) ---------- */
+  .qa { margin-bottom: 12px; padding: 0; }
+  .q {
+    width: 100%; display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 16px 20px;
+    background: none; border: 0; color: var(--text-bright); font: inherit; font-weight: 600; text-align: left; cursor: pointer;
+  }
+  .pm { position: relative; flex: none; width: 16px; height: 16px; }
+  .pm::before, .pm::after { content: ""; position: absolute; left: 0; right: 0; top: 50%; height: 2px; margin-top: -1px; background: var(--text-dim); border-radius: 2px; transition: transform 0.3s, opacity 0.3s; }
+  .pm::after { transform: rotate(90deg); }
+  .qa.open .pm::after { transform: rotate(0); opacity: 0; }
+  .a, .cmpwrap { display: grid; grid-template-rows: 0fr; transition: grid-template-rows 0.35s ease; }
+  .qa.open .a, .cmpwrap.open { grid-template-rows: 1fr; }
+  .ai { overflow: hidden; }
+  .ai p { margin: 0; padding: 0 20px 18px; }
+
+  /* ---------- Qualifier ---------- */
+  .quiz .qhead { display: flex; align-items: center; gap: 16px; margin-bottom: 14px; }
+  .quiz .jarwrap { width: 64px; margin: 0; }
+  .step { font-size: 0.85rem; font-weight: 600; color: var(--text-dim); }
+  fieldset { border: 0; padding: 0; margin: 0; min-width: 0; }
+  legend { padding: 0; margin-bottom: 14px; font-size: 1.25rem; font-weight: 700; color: var(--text-bright); line-height: 1.3; }
+  .opts { display: grid; gap: 10px; }
+  .opt {
+    width: 100%; padding: 16px 18px; text-align: left; font: inherit; font-weight: 500; color: var(--text-bright);
+    background: var(--surface-2); border: 1px solid var(--border); border-radius: 12px; cursor: pointer;
+    transition: border-color 0.2s, background 0.2s, transform 0.2s;
+  }
+  .opt:hover { border-color: var(--border-glow); transform: translateX(3px); }
+  .opt.sel { border-color: var(--cyan); background: var(--surface); box-shadow: 0 0 0 1px var(--cyan) inset; }
+  .qnav { margin-top: 16px; }
+  #result { margin-top: 16px; }
+  .kicker { margin: 0; font-size: 0.8rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-dim); }
+  .result h3 { margin: 4px 0 10px; font-size: clamp(1.5rem, 4.5vw, 2rem); font-weight: 800; letter-spacing: -0.02em; color: var(--text-bright); }
+  .result h3 span { color: var(--cyan); }
+  .because { color: var(--text-bright); font-weight: 500; }
+  .result ul { padding-left: 1.2em; margin: 12px 0; }
+  .result li { margin-bottom: 4px; }
+  .price { margin: 14px 0 18px; font-size: 1.05rem; }
+  .price strong { font-size: 2rem; font-weight: 800; color: var(--amber); letter-spacing: -0.02em; }
+  .actions { display: flex; flex-wrap: wrap; align-items: center; gap: 16px; }
+  .fine { margin: 14px 0 0; font-size: 0.82rem; color: var(--text-dim); }
+  .cmpwrap { margin-top: 14px; }
+  .tablescroll { overflow-x: auto; }
+  .cmpwrap .ai { overflow: hidden; }
+  table { width: 100%; border-collapse: collapse; font-size: 0.9rem; min-width: 560px; }
+  th, td { text-align: left; vertical-align: top; padding: 10px 12px; border-top: 1px solid var(--border); }
+  th { color: var(--text-bright); }
+  td ul { margin: 0; padding-left: 1.1em; }
+  .win { background: var(--surface-2); }
+
+  /* ---------- Footer ---------- */
+  footer { position: relative; z-index: 1; margin-top: 64px; padding: 28px 0 44px; border-top: 1px solid var(--border); color: var(--text-dim); font-size: 0.85rem; }
+  footer .wrap { display: grid; gap: 12px; }
+  footer ul { margin: 0; padding-left: 0; list-style: none; display: grid; gap: 4px; }
+  footer p { margin: 0; }
+
+  @media (max-width: 640px) {
+    .hero { padding: 56px 0 16px; }
+    .sample { grid-template-columns: 1fr; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    .orb { animation: none; }
+    .jfill, .a, .cmpwrap, .pm::before, .pm::after, .opt { transition: none; }
+    .coin { animation: none; display: none; }
+  }
+</style>
+</head>
+<body>
+<div class="bg"></div><div class="grid"></div>
+<div class="orb o1"></div><div class="orb o2"></div><div class="orb o3"></div>
+
+<header class="top">
+  <div class="bar">
+    <span class="brand" data-product>[Product]</span>
+    <button class="iconbtn" id="theme" title="Toggle light / dark theme" aria-label="Toggle light or dark theme">
+      <svg class="i-moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
+      <svg class="i-sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
+    </button>
+  </div>
+</header>
+
+<main class="wrap">
+  <!-- ===== TOP HALF: LANDING PAGE ===== -->
+  <section class="hero">
+    <h1><span class="e">Earn it.</span> <span class="s">Save it.</span> <span class="o">Own it.</span></h1>
+    <p class="sub">A kids' card and money app where allowance is linked to chores, savings goals fill up as they save, and you stay in control.</p>
+    <a class="btn" href="#fit">Find your family fit</a>
+  </section>
+
+  <section id="reasons">
+    <h2>Three reasons this is for you</h2>
+    <div class="cards" style="margin-top:20px">
+      <div class="card"><div class="tag" style="color:var(--amber)">Earn</div><h3>Earned, not just handed over</h3><p>Allowance is linked to chores, which is how most Irish parents who give pocket money say it should work.</p></div>
+      <div class="card"><div class="tag" style="color:var(--neon)">Together</div><h3>The whole family can take part</h3><p>Both parents get the same view, and nothing a second parent needs sits behind a higher plan.</p></div>
+      <div class="card"><div class="tag" style="color:var(--cyan)">Control</div><h3>Their goals, your controls</h3><p>Kids fill savings goals, while you set the limits, with no streaks or countdown pressure.</p></div>
+    </div>
+  </section>
+
+  <section id="sample">
+    <h2>A week in the life</h2>
+    <p class="lede">Scroll, then tap the button to see how a chore turns into progress.</p>
+    <div class="card sample" id="sampleBox">
+      <div class="jarcol">
+        <div class="jarwrap" id="sjar"></div>
+        <button class="btn" id="chore" type="button">Mark chore done</button>
+        <span class="sr" id="coinNote" aria-live="polite"></span>
+      </div>
+      <ol class="steps" id="steps">
+        <li>A parent sets a chore, such as “Tidy your room”.</li>
+        <li>The child marks it done, the parent approves, and the allowance lands.</li>
+        <li>The child puts some towards a goal, and the jar fills.</li>
+        <li>A relative adds birthday money toward the goal.</li><!-- CONFIRM: relative pay-in -->
+        <li>The child taps the card in a shop, and the parent gets an alert within the limits they set.</li><!-- CONFIRM: alerts and limits -->
+      </ol>
+    </div>
+    <p class="caption">Illustrative example, not a real customer.</p>
+  </section>
+
+  <section id="proof">
+    <h2>Why families are asking for this</h2>
+    <div class="stats" style="margin-top:20px">
+      <div class="card stat"><div class="n" style="color:var(--amber)">86%</div><p>of Irish parents who give pocket money say children should earn it through chores (TUICU survey, c. late 2024) <a href="#src-1">[1]</a></p></div>
+      <div class="card stat"><div class="n" style="color:var(--green)">64%</div><p>of those parents pay ad hoc rather than on a schedule (same survey) <a href="#src-1">[1]</a></p></div>
+      <div class="card stat"><div class="n" style="color:var(--cyan)">57% vs 29%</div><p>of “thriving” versus “struggling” Irish adults recall parents talking to them about money (Bank of Ireland/Red C, Feb 2026) <a href="#src-3">[3]</a></p></div>
+    </div>
+    <h3 class="sub2">What parents and teens say about today's options</h3>
+    <div class="cards">
+      <figure class="card quote"><blockquote>“pay for a premium service to have two parents have access”</blockquote><figcaption>Reviewer of a kids' money app, Finder UK <a href="#src-13">[13]</a></figcaption></figure>
+      <figure class="card quote"><blockquote>“Only one free top-up to the child account a month”</blockquote><figcaption>Finder UK review of a kids' money app <a href="#src-16">[16]</a></figcaption></figure>
+      <figure class="card quote"><blockquote>“£4.99 per child can add up over years”</blockquote><figcaption>GetSmartSaver review of a kids' money app <a href="#src-17">[17]</a></figcaption></figure>
+    </div>
+    <!-- Legal review needed for third-party quotes before launch -->
+  </section>
+
+  <section id="faq">
+    <h2>Questions parents ask</h2>
+    <div style="margin-top:20px" id="faqList"></div>
+  </section>
+
+  <!-- ===== BOTTOM HALF: WORKING PROTOTYPE ===== -->
+  <section id="fit">
+    <h2>Find your family fit</h2>
+    <p class="lede">Five quick questions to match your family to a plan.</p>
+    <div class="card quiz" id="quizBox">
+      <div class="qhead">
+        <div class="jarwrap" id="qjar"></div>
+        <div class="step" id="qstep">Question 1 of 5</div>
+      </div>
+      <div id="qbody"></div>
+      <div class="qnav"><button class="btn ghost" id="qback" type="button" hidden>Back</button></div>
+    </div>
+    <div id="result" aria-live="polite"></div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <p>Illustrative example, not a real customer.</p>
+    <div>
+      <p style="margin-bottom:6px;color:var(--text-bright);font-weight:600">Sources</p>
+      <ul>
+        <li id="src-1">[1] <a href="https://www.echolive.ie/nationalnews/arid-41506286.html" target="_blank" rel="noopener">Echo – Nearly 50% of parents give their children pocket money (TUICU survey)</a></li>
+        <li id="src-3">[3] <a href="https://www.marketscreener.com/news/bank-of-ireland-early-money-guidance-at-home-and-school-may-support-stronger-financial-confidence-i-ce7e5cd8de81f722" target="_blank" rel="noopener">Bank of Ireland/Red C Financial Literacy Index (via MarketScreener)</a></li>
+        <li id="src-13">[13] <a href="https://www.finder.com/uk/banking/childrens-banking/revolut-junior-review" target="_blank" rel="noopener">Finder UK – Revolut &lt;18 review</a></li>
+        <li id="src-16">[16] <a href="https://www.finder.com/uk/banking/childrens-banking/gohenry-review" target="_blank" rel="noopener">Finder UK – GoHenry review</a></li>
+        <li id="src-17">[17] <a href="https://getsmartsaver.co.uk/gohenry-uk-review-2026/" target="_blank" rel="noopener">GetSmartSaver – GoHenry UK review 2026</a></li>
+      </ul>
+    </div>
+    <p>© <span id="year">2026</span> <span data-product>[Product]</span></p>
+  </div>
+</footer>
+
+<script>
+/* ===== CONFIG: change product name and prices here ===== */
+const CONFIG = {
+  product: "[Product]",
+  tiers: {
+    starter: { name: "Starter", fit: "1–2 children, mostly 6–12, parent-led", price: "€2.99", cta: "Start with Starter",
+      inc: ["Parent-led controls: approve chores, set limits, freeze the card", "Chore-linked allowance", "Goal jar", "Age-appropriate lessons for 6–12"] },
+    teen: { name: "Teen", fit: "1–2 children, 13–17, teen-led with guardrails", price: "€3.99", cta: "Set up your teen",
+      inc: ["Their own budget view", "Parent sets the guardrails", "16+ join with parent approval", "Lessons for 13–17"] },
+    family: { name: "Family", fit: "3 or more children, or a mix of ages", price: "€5.99", cta: "Set up your family",
+      inc: ["One flat price for up to 5 children", "A shared chore board across siblings", "Per-child age settings"] }
+  }
+};
+// CONFIRM before launch: prices, child cap, relative pay-in, top-up rules, 16+ approval flow, CTA destination.
+const KEY = { S: "starter", T: "teen", F: "family" };
+const $ = id => document.getElementById(id);
+const P = s => s.replace(/\[Product\]/g, CONFIG.product);
+const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+/* ---------- Product name, year, theme ---------- */
+document.querySelectorAll("[data-product]").forEach(el => el.textContent = CONFIG.product);
+document.title = CONFIG.product + " · Earn it. Save it. Own it.";
+$("year").textContent = new Date().getFullYear();
+$("theme").addEventListener("click", () => {
+  const light = document.documentElement.classList.toggle("light");
+  try { localStorage.setItem("theme", light ? "light" : "dark"); } catch (e) {}
+});
+
+/* ---------- Goal jar ---------- */
+const JAR = "M30 28h60c10 6 14 14 14 26v68c0 10-8 18-18 18H34c-10 0-18-8-18-18V54c0-12 4-20 14-26z";
+function jar(id) {
+  return `<svg class="jar" viewBox="0 0 120 150" role="img" aria-label="Savings goal jar"><defs><clipPath id="c${id}"><path d="${JAR}"/></clipPath></defs>
+  <path class="jbg" d="${JAR}"/><g clip-path="url(#c${id})"><rect class="jfill" x="0" y="28" width="120" height="120"/></g>
+  <path class="jline" d="${JAR}"/><rect class="jlid" x="26" y="14" width="68" height="14" rx="5"/></svg>`;
+}
+function setLvl(wrap, v) { wrap.querySelector("svg").style.setProperty("--lvl", Math.max(0, Math.min(1, v))); }
+$("sjar").innerHTML = jar("s"); $("qjar").innerHTML = jar("q");
+
+/* ---------- Sample-experience: scroll fills the jar, button drops a coin ---------- */
+const box = $("sampleBox"), stepEls = [...document.querySelectorAll("#steps li")];
+let bumps = 0, ticking = false;
+function updateSample() {
+  ticking = false;
+  const r = box.getBoundingClientRect(), vh = innerHeight;
+  const p = Math.max(0, Math.min(1, (vh - r.top) / (vh + r.height)));
+  setLvl($("sjar"), 0.1 + 0.5 * p + bumps * 0.12);
+  const active = Math.max(1, Math.min(5, Math.ceil(p * 5 * 1.4)));
+  stepEls.forEach((li, i) => li.classList.toggle("on", i < active));
+}
+function queue() { if (!ticking) { ticking = true; requestAnimationFrame(updateSample); } }
+addEventListener("scroll", queue, { passive: true }); addEventListener("resize", queue);
+$("chore").addEventListener("click", () => {
+  bumps = Math.min(4, bumps + 1);
+  if (!reduce) {
+    const c = document.createElement("div"); c.className = "coin"; $("sjar").appendChild(c);
+    c.addEventListener("animationend", () => c.remove());
+  }
+  $("coinNote").textContent = "Coin added to the goal jar (" + bumps + ").";
+  updateSample();
+});
+updateSample();
+
+/* ---------- Accordion helper ---------- */
+function toggleQA(qa, btn) {
+  const open = qa.classList.toggle("open");
+  btn.setAttribute("aria-expanded", open);
+}
+const FAQ = [
+  ["Why pay when other kids' apps are free?", "Free options exist, so compare before you choose. A plan here covers the whole family at one flat price. It includes chore-linked allowance, a savings-goal dashboard, and a second parent at no extra cost."],
+  ["Is it safe?", "You set spending limits, get alerts and can freeze the card. Under-16s need a parent to set them up."],
+  ["Will it turn money into a game they can't put down?", "No. Progress is about savings goals, not streaks, countdowns or surprise rewards."],
+  ["What happens when my child gets older?", "Teens get more independence with guardrails you control. At 16, teens can join with parent approval."],
+  ["Can both parents and relatives join?", "Both parents get the same view on every plan, and relatives can add money toward a goal."]
+];
+$("faqList").innerHTML = FAQ.map((f, i) => `<div class="card qa"><button class="q" type="button" aria-expanded="false" aria-controls="a${i}" id="q${i}">${f[0]}<span class="pm"></span></button>
+  <div class="a" id="a${i}" role="region" aria-labelledby="q${i}"><div class="ai"><p>${f[1]}</p></div></div></div>`).join("");
+document.querySelectorAll("#faqList .qa").forEach(qa => { const b = qa.querySelector(".q"); b.addEventListener("click", () => toggleQA(qa, b)); });
+
+/* ---------- Qualifier ---------- */
+/* Scores: S = Starter, F = Family, T = Teen. Q1, Q2, Q4 are scored; Q3 and Q5 personalise the result. */
+const Q = [
+  { q: "How many children aged 6–17 would use it?", o: [
+    { l: "1", s: "1 child", sc: { S: 2, T: 1 } },
+    { l: "2", s: "2 children", sc: { S: 1, F: 1, T: 1 } },
+    { l: "3 or more", s: "3 or more children", sc: { F: 3 } } ] },
+  { q: "How old are they?", o: [
+    { l: "All 6–9", s: "all aged 6–9", sc: { S: 3 }, tb: "S" },
+    { l: "All 10–12", s: "all aged 10–12", sc: { S: 2 }, tb: "S" },
+    { l: "All 13–17", s: "all aged 13–17", sc: { T: 3 }, tb: "T" },
+    { l: "A mix across those ranges", s: "a mix of ages", sc: { F: 2 }, tb: "F" } ] },
+  { q: "How does pocket money work at home today?", o: [
+    { l: "Earned through chores", line: "You already link money to effort. [Product] does the tracking." },
+    { l: "Ad hoc, when asked", line: "Pocket money here is often ad hoc, so top up whenever you like and still link it to a chore." },
+    { l: "A fixed regular amount", line: "A fixed amount works too. Add a chore to turn it into earning." },
+    { l: "We don't give it yet", line: "Start with one chore and one goal." } ] },
+  { q: "How much independence do you want them to have?", o: [
+    { l: "I operate everything, they watch", s: "you operate everything", sc: { S: 2 } },
+    { l: "They use their own card within my limits", s: "their own card within your limits", sc: { S: 1, F: 1 } },
+    { l: "They manage their own budget, I oversee", s: "they manage their own budget with you overseeing", sc: { T: 2 } },
+    { l: "Not sure yet", sc: {} } ] },
+  { q: "Who else needs to be involved?", o: [
+    { l: "Just me", line: "Everything runs from one parent view." },
+    { l: "Me and a co-parent", line: "Both parents get the same view, with no upgrade needed." },
+    { l: "Co-parent plus relatives who send money", line: "Relatives can add to a goal." } ] }
+];
+let i = 0, ans = [], busy = false;
+const qbody
